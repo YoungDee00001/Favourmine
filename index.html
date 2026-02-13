@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">  
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">  
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <style>  
     :root {  
         --primary-pink: #d68c98; 
@@ -14,7 +16,7 @@
         --gold: #c5a059;  
         --cream: #fff9f9;  
         --text-dark: #4a4a4a;  
-        --glass: rgba(255, 255, 255, 0.82);  
+        --glass: rgba(255, 255, 255, 0.85);  
     }  
 
     * { box-sizing: border-box; margin: 0; padding: 0; }  
@@ -28,16 +30,16 @@
         background-attachment: fixed;  
         color: var(--text-dark);  
         min-height: 100vh;  
-        overflow-x: hidden;  
         display: flex;  
         align-items: center;  
         justify-content: center;  
+        overflow-x: hidden;
     }  
 
     .bg-overlay {  
         position: fixed;  
         top: 0; left: 0; width: 100%; height: 100%;  
-        background: linear-gradient(135deg, rgba(255, 240, 245, 0.7), rgba(214, 140, 152, 0.5));  
+        background: linear-gradient(135deg, rgba(255, 240, 245, 0.6), rgba(214, 140, 152, 0.4));  
         z-index: 0;  
     }  
 
@@ -45,8 +47,8 @@
         position: relative;  
         z-index: 10;  
         width: 90%;  
-        max-width: 800px;  
-        perspective: 1000px;  
+        max-width: 600px; /* Slimmer for better mobile reading */
+        margin: 20px auto;
     }  
 
     .glass-card {  
@@ -55,21 +57,22 @@
         -webkit-backdrop-filter: blur(15px);  
         border: 1px solid rgba(255, 255, 255, 0.6);  
         border-radius: 30px;  
-        padding: 3rem 2.5rem;  
+        padding: 2.5rem 1.5rem;  
         box-shadow: 0 25px 50px rgba(158, 79, 91, 0.2);  
         text-align: center;  
-        transition: all 0.6s ease-in-out;  
+        transition: all 0.5s ease;  
     }  
 
-    h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--deep-rose); margin-bottom: 0.5rem; }  
-    h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 400; margin-bottom: 2rem; }  
-    .cursive { font-family: 'Great Vibes', cursive; color: var(--gold); font-size: 2.5rem; }  
+    h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--deep-rose); margin-bottom: 0.5rem; line-height: 1.2; }  
+    h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 400; margin-bottom: 1.5rem; }  
+    .cursive { font-family: 'Great Vibes', cursive; color: var(--gold); font-size: 2.2rem; display: block; margin-bottom: 10px; }  
 
-    /* Buttons */  
-    .btn-group { display: flex; justify-content: center; gap: 20px; margin-top: 2rem; flex-wrap: wrap; }  
+    .btn-group { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 1.5rem; }  
     
     .main-btn {  
-        padding: 15px 40px;  
+        width: 80%;
+        max-width: 300px;
+        padding: 15px 25px;  
         font-size: 1.1rem;  
         border-radius: 50px;  
         border: none;  
@@ -77,58 +80,54 @@
         font-family: 'Playfair Display', serif;  
         transition: all 0.3s ease;  
         text-decoration: none;
-        display: inline-block;
+        display: block;
     }  
 
-    #yesBtn, .gift-btn { background: linear-gradient(45deg, var(--deep-rose), var(--primary-pink)); color: white; box-shadow: 0 10px 20px rgba(214, 140, 152, 0.4); }  
-    #noBtn { background: white; color: var(--deep-rose); border: 2px solid var(--primary-pink); }  
+    #yesBtn, .gift-btn { background: linear-gradient(45deg, var(--deep-rose), var(--primary-pink)); color: white; box-shadow: 0 10px 20px rgba(214, 140, 152, 0.3); }  
+    #noBtn { background: white; color: var(--deep-rose); border: 2px solid var(--primary-pink); position: relative; }  
 
-    /* Sections Visibility */
-    #letter-section, #gift-section { display: none; opacity: 0; transform: translateY(30px); }
+    #letter-section, #gift-section { display: none; opacity: 0; }
 
-    .letter-content { line-height: 1.8; font-size: 1.1rem; text-align: left; margin: 2rem 0; }  
+    .letter-content { line-height: 1.7; font-size: 1.05rem; text-align: left; margin: 1.5rem 0; max-height: 60vh; overflow-y: auto; padding-right: 5px; }  
     .highlight { color: var(--deep-rose); font-weight: 600; }  
 
-    /* Flower Animation */
-    .flower-container {
-        margin: 20px auto;
-        font-size: 8rem;
-        animation: pulseFlower 2s infinite ease-in-out;
-        display: block;
-    }
-
+    /* Animations */
+    .flower-container { font-size: 6rem; margin: 15px 0; animation: pulseFlower 2s infinite ease-in-out; }
     @keyframes pulseFlower {
-        0% { transform: scale(1); filter: drop-shadow(0 0 0px var(--primary-pink)); }
-        50% { transform: scale(1.15); filter: drop-shadow(0 0 20px var(--primary-pink)); }
-        100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--primary-pink)); }
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--primary-pink)); }
+        50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary-pink)); }
     }
 
-    /* Floating Hearts */
-    .heart { position: absolute; bottom: -20px; animation: floatUp 6s linear infinite; opacity: 0; z-index: 5; }  
+    .heart { position: fixed; bottom: -20px; pointer-events: none; animation: floatUp 5s linear forwards; opacity: 0; z-index: 100; }  
     @keyframes floatUp {  
         0% { transform: translateY(0) scale(0.5); opacity: 0; }  
-        20% { opacity: 0.8; }  
-        100% { transform: translateY(-100vh) scale(1.2) rotate(360deg); opacity: 0; }  
+        20% { opacity: 0.7; }  
+        100% { transform: translateY(-110vh) scale(1.2) rotate(360deg); opacity: 0; }  
     }  
 
-    .fade-in { animation: fadeIn 1.2s forwards ease-out; }  
-    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }  
+    .fade-in { animation: fadeIn 0.8s forwards ease-out; }  
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }  
 
-    @media (max-width: 600px) { h1 { font-size: 2.2rem; } .main-btn { width: 100%; } }
+    /* Mobile Tweaks */
+    @media (max-width: 480px) {
+        h1 { font-size: 1.8rem; }
+        .glass-card { padding: 2rem 1rem; }
+        .cursive { font-size: 1.8rem; }
+    }
 </style>  
 </head>  
 <body>  
     <div class="bg-overlay"></div>  
-    <div class="hearts-container" id="hearts-container"></div>  
+    <div id="hearts-container"></div>  
 
     <div class="container">  
-        <div id="landing-section" class="glass-card">  
+        <div id="landing-section" class="glass-card fade-in">  
             <span class="cursive">To the Blessing God gave me...</span>  
             <h1>Dearest Favourite</h1>  
-            <h2>Will you be my Vale?</h2>  
+            <h2>Will you be my Valentine?</h2>  
             <div class="btn-group">  
-                <button class="main-btn" id="yesBtn" onclick="revealSection('landing-section', 'letter-section')">Yes, I Will 💖</button>  
-                <button class="main-btn" id="noBtn" onmouseover="moveButton(this)">No</button>  
+                <button class="main-btn" id="yesBtn" onclick="celebrateAndReveal()">Yes, I Will 💖</button>  
+                <button class="main-btn" id="noBtn" onclick="moveButton(this)" onmouseover="moveButton(this)">No</button>  
             </div>  
         </div>  
 
@@ -136,34 +135,52 @@
             <span style="font-size: 1.5rem; color: var(--gold);">✝</span>  
             <h1>My Forever Valentine</h1>  
             <div class="letter-content">  
-                <p><strong>My Dearest Favourite,</strong></p>  
-                <p>From the moment we started talking, I didn’t know something this meaningful was beginning. What felt simple grew into a part of my heart I protect and cherish.</p>  
-                <p>I remember the laughter and the small talks. Now, sharing our dreams, <span class="highlight">I see God's grace in how our paths crossed.</span></p>  
-                <p>I may not have fancy gifts right now, but I am giving you my heart, my sincerity, and my presence. These are my most precious offerings to you.</p>  
-                <p>I am loving who we are becoming together—a future that feels peaceful and blessed. My heart is calm and certain with you.</p>  
+                <p><strong>My Dearest Favourite,</strong></p><br>
+                <p>From the moment we started talking, I didn’t know something this meaningful was beginning. What felt simple grew into a part of my heart I protect and cherish.</p><br>
+                <p>I remember the laughter and the small talks. Now, sharing our dreams, <span class="highlight">I see God's grace in how our paths crossed.</span></p><br>
+                <p>I may not have fancy gifts right now, but I am giving you my heart, my sincerity, and my presence. These are my most precious offerings to you.</p><br>
+                <p>I am loving who we are becoming together—a future that feels peaceful and blessed. My heart is calm and certain with you.</p><br>
                 <p>Happy Valentine, my Favourite. You are my prayer answered. ❤️</p>  
             </div>  
-            <hr style="border: 0; height: 1px; background: #eee; margin-bottom: 2rem;">
-            <button class="main-btn gift-btn" onclick="revealSection('letter-section', 'gift-section')">
-                Check Gift 🎁
+            <hr style="border: 0; height: 1px; background: rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+            <button class="main-btn gift-btn" onclick="revealSection('letter-section', 'gift-section')" style="width: 100%;">
+                Open Your Gift 🎁
             </button>
         </div>
 
         <div id="gift-section" class="glass-card">
             <span class="cursive">A Bloom for You</span>
             <div class="flower-container">🌸</div>
-            <h1 style="font-size: 2.5rem;">Wetin make i put here favour at least u don smile small</h1>
-            <p style="font-size: 1.2rem; margin-top: 15px;">
+            <h1 style="font-size: 1.8rem;">I just wanted to see you smile.</h1>
+            <p style="font-size: 1.1rem; margin-top: 15px; color: var(--text-dark);">
                 Like this flower, my love for you continues to bloom every single day. 
                 Thank you for being my <strong>Favourite</strong>.
             </p>
             <div class="btn-group">
-                <button class="main-btn" id="yesBtn" onclick="location.reload()">Bye  🕊️</button>
+                <button class="main-btn" onclick="location.reload()">With Love, Always 🕊️</button>
             </div>
         </div>
     </div>  
 
 <script>  
+    function celebrateAndReveal() {
+        // 1. Fire Confetti
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#d68c98', '#9e4f5b', '#c5a059']
+        });
+
+        // 2. Start Floating Hearts
+        createHearts();
+
+        // 3. Switch Section
+        setTimeout(() => {
+            revealSection('landing-section', 'letter-section');
+        }, 500);
+    }
+
     function revealSection(currentId, nextId) {  
         const current = document.getElementById(currentId);  
         const next = document.getElementById(nextId);  
@@ -172,40 +189,39 @@
         current.style.transform = 'scale(0.9)';  
           
         setTimeout(() => {  
-        👍    current.style.display = 'none';  
+            current.style.display = 'none';  
             next.style.display = 'block';  
-            void next.offsetWidth;   
             next.classList.add('fade-in');  
-            if(nextId === 'letter-section' || nextId === 'gift-section') createHearts();  
-        }, 500);  
+        }, 400);  
     }  
   
     function moveButton(btn) {  
-        const x = (Math.random() - 0.5) * 250;  
-        const y = (Math.random() - 0.5) * 250;  
+        // Make it harder to click "No" on mobile by jumping further
+        const x = (Math.random() - 0.5) * 200;  
+        const y = (Math.random() - 0.5) * 200;  
         btn.style.position = 'absolute';  
-        btn.style.transform = `translate(${x}px, ${y}px)`;  
+        btn.style.zIndex = '100';
+        btn.style.left = `calc(50% + ${x}px)`;
+        btn.style.top = `calc(50% + ${y}px)`;
         btn.innerText = "Yes? 🤭";  
     }  
   
     function createHearts() {  
         const container = document.getElementById('hearts-container');  
-        const colors = ['#d68c98', '#9e4f5b', '#c5a059', '#fff'];  
+        const symbols = ['❤', '🌸', '✨', '💖']; 
         
         const interval = setInterval(() => {  
             const heart = document.createElement('div');  
             heart.className = 'heart';  
-            heart.innerHTML = '❤';  
+            heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];  
             heart.style.left = Math.random() * 100 + "vw";  
-            heart.style.color = colors[Math.floor(Math.random() * colors.length)];  
-            heart.style.fontSize = (Math.random() * 20 + 15) + "px";  
-            heart.style.animationDuration = (Math.random() * 3 + 3) + "s";  
+            heart.style.fontSize = (Math.random() * 20 + 20) + "px";  
+            heart.style.animationDuration = (Math.random() * 2 + 3) + "s";  
             container.appendChild(heart);  
-            setTimeout(() => heart.remove(), 6000);  
-        }, 300);
+            setTimeout(() => heart.remove(), 5000);  
+        }, 200);
 
-        // Stop creating after a while to save performance, or keep it going!
-        setTimeout(() => clearInterval(interval), 10000);
+        setTimeout(() => clearInterval(interval), 8000);
     }  
 </script>  
 </body>  
