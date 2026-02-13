@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&display=swap" rel="stylesheet">  
     
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/dist/confetti.browser.min.js"></script>
 
     <style>  
         :root {  
@@ -24,15 +24,26 @@
 
         body {  
             font-family: 'Lato', sans-serif;  
-            background: linear-gradient(135deg, #fcecef 0%, #e0c3fc 50%, #8ec5fc 100%);
+            /* Professional Floral Background Overlay */
+            background: 
+                linear-gradient(135deg, rgba(252, 236, 239, 0.8) 0%, rgba(224, 195, 252, 0.8) 50%, rgba(142, 197, 252, 0.8) 100%),
+                url('https://www.transparenttextures.com/patterns/flowers.png'); /* Subtle floral texture */
             background-attachment: fixed;
             color: var(--text-dark);  
             min-height: 100vh;  
             display: flex;  
             align-items: center;  
             justify-content: center;  
-            overflow: hidden; /* Prevents scrollbars during animations */
-        }  
+            overflow: hidden; 
+        }
+
+        /* Decorative Static Flowers in Corners */
+        body::before {
+            content: "🌸"; position: fixed; top: 5%; left: 5%; font-size: 2rem; opacity: 0.3; filter: grayscale(30%);
+        }
+        body::after {
+            content: "🌺"; position: fixed; bottom: 5%; right: 5%; font-size: 2.5rem; opacity: 0.3; filter: grayscale(30%);
+        }
 
         .container {  
             position: relative;  
@@ -99,12 +110,19 @@
         
         .highlight { color: var(--deep-purple); font-weight: 700; border-bottom: 2px solid var(--soft-blue); }  
 
-        .decoration { position: fixed; bottom: -50px; pointer-events: none; z-index: 1; animation: floatUp 6s linear forwards; }
+        /* Realistic Floating Floral Decorations */
+        .decoration { 
+            position: fixed; 
+            bottom: -100px; 
+            pointer-events: none; 
+            z-index: 1; 
+            animation: floatUp 7s linear forwards; 
+        }
         
         @keyframes floatUp {  
             0% { transform: translateY(0) rotate(0deg); opacity: 0; }  
-            10% { opacity: 0.8; }
-            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }  
+            15% { opacity: 0.9; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }  
         }
 
         .fade-in { animation: fadeIn 0.6s forwards ease-out; }  
@@ -159,17 +177,21 @@
 
 <script>  
     function celebrateAndReveal() {
-        // Safety check: only run confetti if the library loaded
+        // High-density floral burst
+        const flowerIcons = ['🌸', '🌺', '🌷', '🌹', '🌻', '🌼', '💖'];
+        
+        // Canvas Confetti Library check
         if (typeof confetti === 'function') {
             confetti({
-                particleCount: 100,
-                spread: 70,
+                particleCount: 150,
+                spread: 100,
                 origin: { y: 0.6 },
-                colors: ['#ff7eb9', '#7a5dfa', '#ffffff']
+                colors: ['#ff7eb9', '#7a5dfa', '#ffffff', '#a2d2ff']
             });
         }
         
-        startDecorations();
+        // Massive flower stream start
+        startDecorations(true); 
         revealSection('landing-section', 'letter-section');
     }
 
@@ -181,38 +203,49 @@
         setTimeout(() => {  
             current.style.display = 'none';  
             next.style.display = 'block';  
-            setTimeout(() => { next.style.opacity = '1'; next.classList.add('fade-in'); }, 10);
+            setTimeout(() => { 
+                next.style.opacity = '1'; 
+                next.classList.add('fade-in'); 
+            }, 10);
         }, 400);  
     }  
   
     function moveButton(btn) {  
-        // Mobile-friendly move logic
         const x = Math.random() * (window.innerWidth - btn.offsetWidth);
         const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-        
         btn.style.position = 'fixed';  
         btn.style.left = x + 'px';
         btn.style.top = y + 'px';
         btn.innerText = "Yes? 🤭";  
     }  
   
-    function startDecorations() {  
+    function startDecorations(isIntense) {  
         const container = document.getElementById('decorations-container');  
-        const items = ['💖', '🧸', '🎈', '✨', '🌸', '💙']; 
+        const items = ['🌸', '🌺', '🌷', '🌹', '🌻', '🌼', '💖', '✨']; 
+        
+        // Increased frequency for a "professional floral" feel
+        const frequency = isIntense ? 150 : 400;
         
         const interval = setInterval(() => {  
             const el = document.createElement('div');  
             el.className = 'decoration';  
             el.innerHTML = items[Math.floor(Math.random() * items.length)];  
             el.style.left = Math.random() * 100 + "vw";  
-            el.style.fontSize = (Math.random() * 20 + 20) + "px";  
+            el.style.fontSize = (Math.random() * 25 + 20) + "px";  
+            // Vary animation speed for natural look
+            el.style.animationDuration = (Math.random() * 3 + 4) + "s";
             container.appendChild(el);  
-            setTimeout(() => el.remove(), 6000);  
-        }, 400);
+            setTimeout(() => el.remove(), 7000);  
+        }, frequency);
 
-        // Stop generating after 10 seconds to save battery
-        setTimeout(() => clearInterval(interval), 10000);
+        // Keep flowers blooming for the rest of the experience
+        if (!isIntense) {
+            setTimeout(() => clearInterval(interval), 15000);
+        }
     }  
+
+    // Start a few subtle flowers on load
+    window.onload = () => startDecorations(false);
 </script>  
 </body>  
 </html>
